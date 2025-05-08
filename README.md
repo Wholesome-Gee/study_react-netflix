@@ -36,3 +36,6 @@ gh-pages : npm i gh-pages
 **📗헤더 category에 useMatch를 활용하여 match시 category 하단부에 빨간 점 생성**
 
 ---
+
+### #9.3
+**📗헤더 category 하단부 빨간점에 layoutId를 통해 이동하는 애니메이트 적용하기**
