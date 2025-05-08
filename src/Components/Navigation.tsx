@@ -113,7 +113,7 @@ export default function Navigation(){
   */
 
   useMotionValueEvent(scrollY,"change",()=>{
-    console.log(scrollY.get())
+    // console.log(scrollY.get())
     if( scrollY.get() < 100 ){
       navAnimation.start("start")
     } else {

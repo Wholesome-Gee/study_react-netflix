@@ -9,17 +9,16 @@ styled-components : npm i styled-components, npm i --save-dev @types/styled-comp
 react-router-dom : npm i react-router-dom, npm i --save-dev @types/react-router-dom
 recoil (React v18 이하에서 구동) : npm i recoil 
 framer-motion : npm i framer-motion
-
+react v18 다운그레이드 : npm i react@18 react-dom@18
+react-query (React v18 이하에서 구동) : npm i react-query 
 
 🚫 미사용 라이브러리
 
-react-query (React v18 이하에서 구동) : npm i react-query 
 apex-charts : npm install apexcharts --save
 react-helmet : npm i react-helmet
 react-hook-form : npm i react-hook-form
 react-icons : npm i react-icons --save
 react-beautiful-dnd : npm i react-beautiful-dnd --legacy-peer-deps, npm i --save-dev @types/react-beautiful-dnd --legacy-peer-deps
-react v18 다운그레이드 : npm i react@18 react-dom@18
 gh-pages : npm i gh-pages
 
 ---
@@ -52,3 +51,5 @@ gh-pages : npm i gh-pages
 
 ---
 
+### #9.5
+**📗api.ts에 api관련 내용 작성하고 useQuery()를 통해 API 불러오기**
