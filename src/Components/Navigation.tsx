@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { useState } from "react";
 import { Link, useMatch } from "react-router-dom";
 import styled from "styled-components"
@@ -98,9 +98,24 @@ export default function Navigation(){
   // useMatch(url)은 현재 url이 url과 일치하면 현재 url에대한 오브젝트를 반환  #9.2
   // console.log(homeMatch, tvMatch);
   const [searching, setSearching] = useState(false)
+  const inputAnimation = useAnimation()
+  // motion요소에 useAnimation을 부여함으로써 여러개의 animation을 가독성 좋은 코드로 처리할 수 있다.  #9.4
+
   function changeSearching() {
+    if(searching){
+      inputAnimation.start({
+      // 다음 코드는 inputAnimation이 부여된 motion요소의 initial="start"와 같다.
+        scaleX:0
+      }) 
+    } else {
+      inputAnimation.start({
+        scaleX:1
+      })
+    }
     setSearching(searching=> !searching)
   }
+
+
   return (
     <Nav>
       <Column>
@@ -124,7 +139,7 @@ export default function Navigation(){
         <Search>
           <motion.svg
             onClick={changeSearching}
-            animate={{x:searching ? -190 : 0}}
+            animate={{x:searching?-190:0}}
             transition= {{ type:"linear"}}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -138,7 +153,7 @@ export default function Navigation(){
             </path>
           </motion.svg>
           <Input 
-            animate={{scaleX:searching ? 1 : 0}}
+            animate={inputAnimation}
             transition= {{ type:"linear"}}
             placeholder="검색어를 입력하세요."
           />
@@ -149,5 +164,7 @@ export default function Navigation(){
 }
 
 /*
-99. layoutId를 통해 두 Circle의 애니메이트를 연결시켜준다. (빨간점이 좌우로 왔다갔다 거림)  #9.3
+Nav - Column:first-child - Categories - Category => layoutId를 통해 두 Circle의 애니메이트를 연결시켜준다. (빨간점이 좌우로 왔다갔다 거림)  #9.3
+Nav - column:nth-child(2) - Search - Input => useAnimation으로 생성된 inputAnimation을 Input의 animate에 적용시켜주면 된다.  #9.3
+
 */
