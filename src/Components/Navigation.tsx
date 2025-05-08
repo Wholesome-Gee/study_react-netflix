@@ -1,16 +1,15 @@
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, useMotionValueEvent, useScroll } from "framer-motion";
 import { useState } from "react";
 import { Link, useMatch } from "react-router-dom";
 import styled from "styled-components"
 
-const Nav = styled.nav`
+const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
   width: 100%;
   top: 0;
-  background-color: black;
   font-size: 14px;
   padding: 20px 60px;
   color: white;
@@ -90,21 +89,44 @@ const logoVariant = {
     }
   },
 }
-
+const navVariant = {
+  start: {
+    backgroundColor:"rgba(0,0,0,0)"
+  },
+  scroll: {
+    backgroundColor:"rgba(0,0,0,1)"
+  }
+}
 
 export default function Navigation(){
-  const homeMatch = useMatch('/')
-  const tvMatch = useMatch('/tv')
-  // useMatch(url)은 현재 url이 url과 일치하면 현재 url에대한 오브젝트를 반환  #9.2
-  // console.log(homeMatch, tvMatch);
   const [searching, setSearching] = useState(false)
+  const homeMatch = useMatch('/')  // useMatch(url)은 현재 url이 url과 일치하면 현재 url에대한 오브젝트를 반환  #9.2
+  const tvMatch = useMatch('/tv')  // useMatch(url)은 현재 url이 url과 일치하면 현재 url에대한 오브젝트를 반환  #9.2
+  // console.log(homeMatch, tvMatch);
+  const navAnimation = useAnimation()  // motion요소에 useAnimation을 부여함으로써 여러개의 animation을 가독성 좋은 코드로 처리할 수 있다.  #9.4
   const inputAnimation = useAnimation()
-  // motion요소에 useAnimation을 부여함으로써 여러개의 animation을 가독성 좋은 코드로 처리할 수 있다.  #9.4
+  const { scrollY } = useScroll()    // useScroll()은 scrollX,Y / scrollX,YProgress를 반환한다.  #9.4
+
+  /*
+  간단하게 스크롤 시 헤더에 애니메이션 주는방법
+  const scrollYTransform = useTransform(scrollY,[0,200],["rgba(0,0,0,0)","rgba(0,0,0,1)"])  => Nav에 style={{backgroundColor: scrollYTransform}}  #9.4 
+  */
+
+  useMotionValueEvent(scrollY,"change",()=>{
+    console.log(scrollY.get())
+    if( scrollY.get() < 100 ){
+      navAnimation.start("start")
+    } else {
+      navAnimation.start("scroll")
+    }
+  })
+  // useMotionValueEvent는 motionValue의 eventListener이다. motionValue, event종류, 콜백함수를 파라미터로 받는다.  #9.4
+  
+
 
   function changeSearching() {
     if(searching){
-      inputAnimation.start({
-      // 다음 코드는 inputAnimation이 부여된 motion요소의 initial="start"와 같다.
+      inputAnimation.start({  // 다음 코드는 inputAnimation이 부여된 motion요소의 initial="start"와 같다.  #9.4
         scaleX:0
       }) 
     } else {
@@ -117,7 +139,7 @@ export default function Navigation(){
 
 
   return (
-    <Nav>
+    <Nav variants={navVariant} initial="start" animate={navAnimation}>
       <Column>
         <Logo
           variants={logoVariant}
