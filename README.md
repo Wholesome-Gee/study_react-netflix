@@ -8,6 +8,7 @@ react + typescript : npx create-react-app checklist --template typescript
 styled-components : npm i styled-components, npm i --save-dev @types/styled-components
 react-router-dom : npm i react-router-dom, npm i --save-dev @types/react-router-dom
 recoil (React v18 이하에서 구동) : npm i recoil 
+framer-motion : npm i framer-motion
 
 
 🚫 미사용 라이브러리
@@ -23,7 +24,15 @@ gh-pages : npm i gh-pages
 
 ---
 
-#9.1
+### #9.1
 
 **📗프로젝트 route 설정**
 **📗공용 Component(Navigation) 구현**
+
+---
+
+### #9.2
+**📗헤더 로고에 마우스 hover시 로고가 깜빡이는 기능 구현**
+**📗헤더 category에 useMatch를 활용하여 match시 category 하단부에 빨간 점 생성**
+
+---
