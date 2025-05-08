@@ -39,3 +39,6 @@ gh-pages : npm i gh-pages
 
 ### #9.3
 **📗헤더 category 하단부 빨간점에 layoutId를 통해 이동하는 애니메이트 적용하기**
+**📗헤더 Search에 애니메이트 구현하기**
+  - transform-origin은 변화가 시작하는 위치를 나타낸다. 
+    - scaleX를 0->1로 애니메이트 할 시 요소의 정가운데를 기준으로 scaleX가 발생하지만, transform-origin:right,center로 설정 시? 요소의 오른쪽을 기준으로 scaleX가 발생

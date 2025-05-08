@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Link, useMatch } from "react-router-dom";
 import styled from "styled-components"
 
@@ -43,6 +44,9 @@ const Category = styled.li`
 `;
 const Search = styled.span`
   color: white;
+  display: flex;
+  align-items: center;
+  position: relative;
   svg {
     height: 25px;
   }
@@ -59,6 +63,19 @@ const Circle = styled(motion.span)`
   background-color: ${(props) => props.theme.red};
 `
 // left: 0, right:0, margin: 0 auto 는 absolute요소를 relative요소 기준으로 가운데정렬 시키는 방법  #9.2
+const Input = styled(motion.input)`
+  padding: 8px 10px 8px 0 ;
+  padding-left: 40px;
+  border: 1px solid ${(props) => props.theme.white.lightWhite};
+  font-size: 14px;
+  color: white;
+  z-index: -1;
+  position: absolute;
+  right: 0px;
+  transform-origin: right center;
+  background-color: transparent;
+`
+// transform-origin은 변화가 시작하는 위치를 나타낸다.  #9.3
 
 const logoVariant = {
   start: {
@@ -80,7 +97,10 @@ export default function Navigation(){
   const tvMatch = useMatch('/tv')
   // useMatch(url)은 현재 url이 url과 일치하면 현재 url에대한 오브젝트를 반환  #9.2
   // console.log(homeMatch, tvMatch);
-  
+  const [searching, setSearching] = useState(false)
+  function changeSearching() {
+    setSearching(searching=> !searching)
+  }
   return (
     <Nav>
       <Column>
@@ -102,7 +122,10 @@ export default function Navigation(){
       </Column>
       <Column>
         <Search>
-          <svg
+          <motion.svg
+            onClick={changeSearching}
+            animate={{x:searching ? -190 : 0}}
+            transition= {{ type:"linear"}}
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +136,12 @@ export default function Navigation(){
               clipRule="evenodd"
             >
             </path>
-          </svg>
+          </motion.svg>
+          <Input 
+            animate={{scaleX:searching ? 1 : 0}}
+            transition= {{ type:"linear"}}
+            placeholder="검색어를 입력하세요."
+          />
         </Search>
       </Column>
     </Nav>
@@ -121,5 +149,5 @@ export default function Navigation(){
 }
 
 /*
-99. layoutId를 통해 두 Circle의 애니메이트를 연결시켜준다. (빨간점이 좌우로 왔다갔다 거림)  
+99. layoutId를 통해 두 Circle의 애니메이트를 연결시켜준다. (빨간점이 좌우로 왔다갔다 거림)  #9.3
 */
