@@ -47,11 +47,53 @@ const Row = styled(motion.div)`
 `
 const Box = styled(motion.div)<{bgImg:string}>`
   height: 200px;
-  color: red;
   background-image: url(${(props)=>props.bgImg});
   background-size: cover;
   background-position: center center;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
 `
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lightBlack};
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
+`;
+
+const boxVariants = {
+  start: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -80,
+    transition: {
+      delay: 0.4,
+      duration: 0.2,
+      type: "tween",
+    },
+  },
+};
+const infoVariants = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay:0.4,
+      duration: 0.2,
+      type:"tween",
+    }
+  }
+}
 
 export default function Home(){
   const {data, isLoading} = useQuery<IGetMovies>(["movies","nowPlaying"],getMovies) // useQuery([식별자1,식별자의 식별자], fetch함수), useQuery는 fetch함수의 data와 loading상태를 리턴한다.  #9.5
@@ -101,7 +143,20 @@ export default function Home(){
             >
               { 
                 data?.results.slice(1).slice(rowIndex*offset,rowIndex*offset+offset).map((movie)=>{
-                  return <Box bgImg={getMovieImage(movie.backdrop_path,"w500")} key={movie.id}></Box>
+                  return (
+                    <Box 
+                      variants={boxVariants} 
+                      initial="start" 
+                      whileHover="hover"  
+                      transition={{type:"tween"}}
+                      bgImg={getMovieImage(movie.backdrop_path||movie.poster_path,"w500")} 
+                      key={movie.id}
+                    >
+                    <Info variants={infoVariants}>
+                      <h4>{movie.original_title}</h4>
+                    </Info>
+                    </Box>
+                  )
                 })
               }
             </Row>
