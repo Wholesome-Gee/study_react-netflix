@@ -70,3 +70,6 @@ gh-pages : npm i gh-pages
 **📗body에 overflow-x:hidden으로 슬라이드 시 스크롤 바 생성되는거 없애기**
 
 ---
+
+### #9.8 댓글
+**📗resize event가 없는 React에서 resize function 만들기**

@@ -3,6 +3,7 @@ import { getMovieImage, getMovies, IGetMovies } from "../api"
 import styled from "styled-components"
 import { AnimatePresence, motion } from "framer-motion"
 import { useState } from "react"
+import Resize from "../Resize"
 
 const Container = styled.div`
   background-color: black;
@@ -52,17 +53,13 @@ const Box = styled(motion.div)<{bgImg:string}>`
   background-position: center center;
 `
 
-const rowVariant = {
-  start: { x: window.innerWidth + 5 },
-  end: { x: 0 },
-  exit: { x: -window.innerWidth - 5 }
-}
-
 export default function Home(){
   const {data, isLoading} = useQuery<IGetMovies>(["movies","nowPlaying"],getMovies) // useQuery([식별자1,식별자의 식별자], fetch함수), useQuery는 fetch함수의 data와 loading상태를 리턴한다.  #9.5
   const [rowIndex, setRowIndex] = useState(0)
   const [exiting, setExiting] = useState(false)
   const offset = 6; // 한 Row당 보여질 Box 개수  #9.8
+  const width = Resize()
+  
   console.log(data, isLoading)
 
   function increaseIndex() {
@@ -95,10 +92,18 @@ export default function Home(){
           </Banner>
           <Slider>
             <AnimatePresence initial={false} onExitComplete={()=>{setExiting(false)}}>
-            <Row variants={rowVariant} initial="start" animate="end" exit="exit" transition={{type:"tween", duration:1 }} key={rowIndex}>
-              {data?.results.slice(1).slice(rowIndex*offset,rowIndex*offset+offset).map((movie)=>{
-                return <Box bgImg={getMovieImage(movie.backdrop_path,"w500")} key={movie.id}></Box>
-              })}
+            <Row 
+              initial={{x:width+10}} 
+              animate={{x:0}} 
+              exit={{x:-width-10}} 
+              transition={{type:"tween", duration:1 }} 
+              key={rowIndex}
+            >
+              { 
+                data?.results.slice(1).slice(rowIndex*offset,rowIndex*offset+offset).map((movie)=>{
+                  return <Box bgImg={getMovieImage(movie.backdrop_path,"w500")} key={movie.id}></Box>
+                })
+              }
             </Row>
             </AnimatePresence>
           </Slider>
