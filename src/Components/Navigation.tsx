@@ -176,6 +176,7 @@ export default function Navigation(){
           </motion.svg>
           <Input 
             animate={inputAnimation}
+            initial={{ scaleX: 0 }}
             transition= {{ type:"linear"}}
             placeholder="검색어를 입력하세요."
           />
