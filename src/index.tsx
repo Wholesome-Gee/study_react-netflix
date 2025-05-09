@@ -35,6 +35,7 @@ body {
 	line-height: 1;
   background-color: ${(props)=>props.theme.black.mediumBlack};
   color: ${(props)=>props.theme.white.darkWhite};
+  overflow-x: hidden;
 }
 ol, ul {
 	list-style: none;

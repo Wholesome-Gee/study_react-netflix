@@ -64,3 +64,9 @@ gh-pages : npm i gh-pages
 - background-image: url(이미지url), linear-gradient(rgba(0,0,0,0),rgba(0,0,0,1))로 그라데이션 추가
 
 ---
+
+### #9.7~#9.8
+**📗AnimatePresence로 슬라이드구현하기**
+**📗body에 overflow-x:hidden으로 슬라이드 시 스크롤 바 생성되는거 없애기**
+
+---
