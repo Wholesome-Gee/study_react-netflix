@@ -1,7 +1,7 @@
 import { useQuery } from "react-query"
 import { getMovieImage, getMovies, IGetMovies } from "../api"
 import styled from "styled-components"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion, useScroll } from "framer-motion"
 import { useState } from "react"
 import Resize from "../Resize"
 import { useMatch, useNavigate } from "react-router-dom"
@@ -70,6 +70,24 @@ const Info = styled(motion.div)`
     font-size: 18px;
   }
 `;
+const Overlay = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  background-color: rgba(0,0,0,0.5);
+  opacity: 0;
+`
+const Detail = styled(motion.div)<{scrollY:number}>`
+  position: absolute;
+  width: 40vw;
+  height: 80vh; 
+  background-color: red; 
+  top: ${(props)=>props.scrollY+65}px;
+  left: 0; 
+  right: 0; 
+  margin: 0 auto;
+`
 
 const boxVariants = {
   start: {
@@ -101,8 +119,8 @@ export default function Home(){
   const [rowIndex, setRowIndex] = useState(0)
   const [exiting, setExiting] = useState(false)
   const movieMatch = useMatch('/movies/:movieId')  // useMatch(route)는 현재 url이 route와 일치하면 route에 대한 Object를 반환한다.  #9.11
-  console.log('here',movieMatch)
   const navigate = useNavigate()  // useNavigate()는 React Router v6에서 제공하는 Hook으로, 컴포넌트 내에서 URL을 변경하고 페이지 이동을 도와준다. (React Router v5이하에서는 useHistory())  #9.11
+  const {scrollY} = useScroll() // useScroll()은 scrollY,scrollYProgress,scrollX,scrollXProgress 총 4개의 motionValue를 반환하며, 이 motionvalue들은 .get()을 통해 js number타입으로 사용가능하다.  #9.12
   const offset = 6; // 한 Row당 보여질 Box 개수  #9.8
   const width = Resize()
   
@@ -127,7 +145,12 @@ export default function Home(){
     }
   }
   function onBoxClicked(movieId:number) {
+    //슬라이더안에 박스 클릭시 url이동
     navigate(`/movies/${movieId}`)
+  }
+  function onOverlayClick() {
+    //Overlay 클릭시 url이동
+    navigate('/')
   }
 
   return (
@@ -172,10 +195,16 @@ export default function Home(){
             </AnimatePresence>
           </Slider>
           <AnimatePresence>
-            { movieMatch ?
-              <motion.div layoutId={movieMatch.params.movieId} style={{position:"absolute", width:"40vw", height:"80vh", backgroundColor:"red", top:50, left:0, right:0, margin:"0 auto"}}></motion.div> :
-              null
-            }
+            <>
+              
+              { movieMatch ?
+                <>
+                  <Overlay onClick={onOverlayClick} animate={{opacity:1}} transition={{type:"tween", duration:0.3}}/>
+                  <Detail layoutId={movieMatch.params.movieId} scrollY={scrollY.get()}></Detail> 
+                </>:
+                null
+              }
+            </>
           </AnimatePresence>
         </>
       }

@@ -87,3 +87,8 @@ gh-pages : npm i gh-pages
 - useMatch(route)로 현재url이 route와 일치하면 특정 Component 출력하기
 
 ---
+
+### #9.12
+**📗영화 Detail Route 만들기**
+- Detail div 주변에 어두운 Overlay div 만들기
+- useScroll()로 Detail div를 현재 스크롤된 화면의 중앙에 배치하기
