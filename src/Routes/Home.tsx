@@ -79,14 +79,36 @@ const Overlay = styled(motion.div)`
   opacity: 0;
 `
 const Detail = styled(motion.div)<{scrollY:number}>`
-  position: absolute;
   width: 40vw;
   height: 80vh; 
-  background-color: red; 
+  margin: 0 auto;
+  position: absolute;
+  border-radius: 15px;
   top: ${(props)=>props.scrollY+65}px;
   left: 0; 
-  right: 0; 
-  margin: 0 auto;
+  right: 0;
+  overflow: hidden; 
+  background-color: ${(props)=>props.theme.black.lightBlack}; 
+`
+const MovieImg = styled.div<{bgImg:string}>`
+  width: 100%;
+  height: 400px;
+  background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,1)), url(${(props)=>props.bgImg});
+  background-size: cover;
+  background-position: center center;
+`
+const MovieTitle = styled.h3`
+  padding: 20px;
+  font-size: 40px;
+  color: ${(props)=>props.theme.white.lightWhite};
+  position: relative;
+  top: -80px;
+`
+const MovieOverview = styled.p`
+  padding: 20px;
+  color: ${(props)=>props.theme.white.lightWhite};
+  position: relative;
+  top: -80px;
 `
 
 const boxVariants = {
@@ -123,6 +145,8 @@ export default function Home(){
   const {scrollY} = useScroll() // useScroll()은 scrollY,scrollYProgress,scrollX,scrollXProgress 총 4개의 motionValue를 반환하며, 이 motionvalue들은 .get()을 통해 js number타입으로 사용가능하다.  #9.12
   const offset = 6; // 한 Row당 보여질 Box 개수  #9.8
   const width = Resize()
+  const choiceMovie = movieMatch?.params.movieId && data?.results.find((movie)=>movie.id+"" === movieMatch.params.movieId)
+  console.log('this',choiceMovie)
   
   // console.log(data, isLoading)
 
@@ -196,11 +220,18 @@ export default function Home(){
           </Slider>
           <AnimatePresence>
             <>
-              
               { movieMatch ?
                 <>
                   <Overlay onClick={onOverlayClick} animate={{opacity:1}} transition={{type:"tween", duration:0.3}}/>
-                  <Detail layoutId={movieMatch.params.movieId} scrollY={scrollY.get()}></Detail> 
+                  <Detail layoutId={movieMatch.params.movieId} scrollY={scrollY.get()}>
+                    {choiceMovie && (
+                      <>
+                        <MovieImg bgImg={getMovieImage(choiceMovie.backdrop_path||choiceMovie.poster_path||"","w500")}/>
+                        <MovieTitle>{choiceMovie.original_title}</MovieTitle>
+                        <MovieOverview>{choiceMovie.overview}</MovieOverview>
+                      </>
+                    )}
+                  </Detail> 
                 </>:
                 null
               }

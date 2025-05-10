@@ -41,6 +41,6 @@ export function getMovies(){
 }
 
 export function getMovieImage(backdropPath:string, format?:string){
-  return `https://image.tmdb.org/t/p/${format?format:"original"}/${backdropPath}`
+  return `https://image.tmdb.org/t/p/${format?format:"original"}${backdropPath}`
 }
 // getMovies로 받은 data에서 backdrop_path를 사용하여 이미지파일을 받아오는방법  #9.6

@@ -92,3 +92,10 @@ gh-pages : npm i gh-pages
 **📗영화 Detail Route 만들기**
 - Detail div 주변에 어두운 Overlay div 만들기
 - useScroll()로 Detail div를 현재 스크롤된 화면의 중앙에 배치하기
+
+---
+
+### #9.13
+**📗영화 Detail Route 만들기**
+
+---
