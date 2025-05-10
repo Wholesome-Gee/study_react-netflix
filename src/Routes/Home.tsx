@@ -4,6 +4,7 @@ import styled from "styled-components"
 import { AnimatePresence, motion } from "framer-motion"
 import { useState } from "react"
 import Resize from "../Resize"
+import { useMatch, useNavigate } from "react-router-dom"
 
 const Container = styled.div`
   background-color: black;
@@ -99,10 +100,13 @@ export default function Home(){
   const {data, isLoading} = useQuery<IGetMovies>(["movies","nowPlaying"],getMovies) // useQuery([식별자1,식별자의 식별자], fetch함수), useQuery는 fetch함수의 data와 loading상태를 리턴한다.  #9.5
   const [rowIndex, setRowIndex] = useState(0)
   const [exiting, setExiting] = useState(false)
+  const movieMatch = useMatch('/movies/:movieId')  // useMatch(route)는 현재 url이 route와 일치하면 route에 대한 Object를 반환한다.  #9.11
+  console.log('here',movieMatch)
+  const navigate = useNavigate()  // useNavigate()는 React Router v6에서 제공하는 Hook으로, 컴포넌트 내에서 URL을 변경하고 페이지 이동을 도와준다. (React Router v5이하에서는 useHistory())  #9.11
   const offset = 6; // 한 Row당 보여질 Box 개수  #9.8
   const width = Resize()
   
-  console.log(data, isLoading)
+  // console.log(data, isLoading)
 
   function increaseIndex() {
     if(data){  // data가 undefined일 시 totalMovies는 undefined가 되기 때문에 if(data)를 사용함  #9.8
@@ -121,6 +125,9 @@ export default function Home(){
       const maxRowIndex = Math.floor(totalMovies / offset) -1;  // totalMovies(19)는 offset(6)으로 나누었을때 딱 떨어지지 않기에 Math.floor로 소수점 내림  #9.8
       setRowIndex(rowIndex => rowIndex===0 ? maxRowIndex : rowIndex+1 );
     }
+  }
+  function onBoxClicked(movieId:number) {
+    navigate(`/movies/${movieId}`)
   }
 
   return (
@@ -145,11 +152,13 @@ export default function Home(){
                 data?.results.slice(1).slice(rowIndex*offset,rowIndex*offset+offset).map((movie)=>{
                   return (
                     <Box 
+                      layoutId={movie.id+""}
                       variants={boxVariants} 
                       initial="start" 
                       whileHover="hover"  
                       transition={{type:"tween"}}
                       bgImg={getMovieImage(movie.backdrop_path||movie.poster_path,"w500")} 
+                      onClick={()=>onBoxClicked(movie.id)}
                       key={movie.id}
                     >
                     <Info variants={infoVariants}>
@@ -162,6 +171,12 @@ export default function Home(){
             </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            { movieMatch ?
+              <motion.div layoutId={movieMatch.params.movieId} style={{position:"absolute", width:"40vw", height:"80vh", backgroundColor:"red", top:50, left:0, right:0, margin:"0 auto"}}></motion.div> :
+              null
+            }
+          </AnimatePresence>
         </>
       }
     </Container>

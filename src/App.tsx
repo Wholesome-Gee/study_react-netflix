@@ -11,7 +11,9 @@ export default function App() {
       <Routes>
         <Route path='/tv' element={<Tv/>}></Route>
         <Route path='/search' element={<Search/>}></Route>
-        <Route path='/' element={<Home/>}></Route>
+        <Route path='/' element={<Home/>}>
+          <Route path='movies/:movieId' element={<Home/>}/>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

@@ -81,3 +81,9 @@ gh-pages : npm i gh-pages
 
 ---
 
+### #9.11
+**📗영화 Detail Route 만들기**
+- useNavigate()로 컴포넌트 내에서 URL을 변경하고 페이지 이동하기
+- useMatch(route)로 현재url이 route와 일치하면 특정 Component 출력하기
+
+---
