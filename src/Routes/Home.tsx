@@ -1,5 +1,5 @@
-import { useQuery } from "react-query"
-import { getMovieImage, getMovies, IGetMovies } from "../api"
+import { useQuery, useQueryClient } from "react-query"
+import { getFirstMovie, getMovieImage, getMovies, IGetFirstMovie, IGetMovies } from "../api"
 import styled from "styled-components"
 import { AnimatePresence, motion, useScroll } from "framer-motion"
 import { useState } from "react"
@@ -33,11 +33,13 @@ const Title = styled.h2`
 `
 const Overview = styled.p`
   width: 50%;
-  font-size: 30px;
+  font-size: 20px;
+  line-height: 28px;
 `
 const Slider = styled.div`
   position: relative;
   top: -100px;
+  height: 100%;
 `;
 const Row = styled(motion.div)`
   width: 100%;
@@ -110,7 +112,55 @@ const MovieOverview = styled.p`
   position: relative;
   top: -80px;
 `
-
+const PrevBtn = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(270,270,270,0.5);
+  border-radius: 50%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 100px;
+  left: 20px;
+  opacity: 0.5;
+  cursor: pointer;
+  background-color: black;
+  &:hover {
+  background-color: white;
+  }
+`
+const NextBtn = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(270,270,270,0.5);
+  border-radius: 50%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 100px;
+  right: 20px;
+  opacity: 0.5;
+  cursor: pointer;
+  background-color: black;
+  &:hover {
+  background-color: white;
+  }
+`
+const SliderTitle = styled.h2`
+  font-weight: 600;
+  font-size: 32px;
+  position: relative;
+  top: -10px;
+`
+const More = styled.div`
+  margin-top: 20px;
+  color: #aaa;
+  span {
+    margin-right: 20px;
+  }
+`
 const boxVariants = {
   start: {
     scale: 1,
@@ -137,35 +187,36 @@ const infoVariants = {
 }
 
 export default function Home(){
-  const {data, isLoading} = useQuery<IGetMovies>(["movies","nowPlaying"],getMovies) // useQuery([식별자1,식별자의 식별자], fetch함수), useQuery는 fetch함수의 data와 loading상태를 리턴한다.  #9.5
+  const {data:nowMovies, isLoading:isLoadingNowMovie} = useQuery<IGetMovies>(["movies","nowPlaying"],getMovies) // useQuery([식별자1,식별자의 식별자], fetch함수), useQuery는 fetch함수의 data와 loading상태를 리턴한다.  #9.5
   const [rowIndex, setRowIndex] = useState(0)
-  const [exiting, setExiting] = useState(false)
+  const [sliding, setSliding] = useState(false)
   const movieMatch = useMatch('/movies/:movieId')  // useMatch(route)는 현재 url이 route와 일치하면 route에 대한 Object를 반환한다.  #9.11
   const navigate = useNavigate()  // useNavigate()는 React Router v6에서 제공하는 Hook으로, 컴포넌트 내에서 URL을 변경하고 페이지 이동을 도와준다. (React Router v5이하에서는 useHistory())  #9.11
   const {scrollY} = useScroll() // useScroll()은 scrollY,scrollYProgress,scrollX,scrollXProgress 총 4개의 motionValue를 반환하며, 이 motionvalue들은 .get()을 통해 js number타입으로 사용가능하다.  #9.12
   const offset = 6; // 한 Row당 보여질 Box 개수  #9.8
   const width = Resize()
-  const choiceMovie = movieMatch?.params.movieId && data?.results.find((movie)=>movie.id+"" === movieMatch.params.movieId)
+  const choiceMovie = movieMatch?.params.movieId && nowMovies?.results.find((movie)=>movie.id+"" === movieMatch.params.movieId)
+
   console.log('this',choiceMovie)
   
-  // console.log(data, isLoading)
-
+  // console.log(nowMovies, isLoadingNowMovie)
+  
   function increaseIndex() {
-    if(data){  // data가 undefined일 시 totalMovies는 undefined가 되기 때문에 if(data)를 사용함  #9.8
-      if(exiting) return;
-      setExiting(true);
-      const totalMovies = data.results.slice(1).length;  // data는 20개라고 가정하고, data에서 Banner에 사용한 영화는 제외하기위해 slice(1)  #9.8
+    if(nowMovies){  // data가 undefined일 시 totalMovies는 undefined가 되기 때문에 if(nowMovies)를 사용함  #9.8
+      if(sliding) return;
+      setSliding(true);
+      const totalMovies = nowMovies.results.slice(1).length;  // data는 20개라고 가정하고, data에서 Banner에 사용한 영화는 제외하기위해 slice(1)  #9.8
       const maxRowIndex = Math.floor(totalMovies / offset) -1;  // totalMovies(19)는 offset(6)으로 나누었을때 딱 떨어지지 않기에 Math.floor로 소수점 내림  #9.8
       setRowIndex(rowIndex => rowIndex===maxRowIndex ? 0 : rowIndex+1 );
     }
   }
   function decreaseIndex() {
-    setExiting(true)
-    if(data){  // data가 undefined일 시 totalMovies는 undefined가 되기 때문에 if(data)를 사용함  #9.8
-      if(exiting) return;
-      const totalMovies = data.results.slice(1).length;  // data는 20개라고 가정하고, data에서 Banner에 사용한 영화는 제외하기위해 slice(1)  #9.8
+    setSliding(true)
+    if(nowMovies){  // data가 undefined일 시 totalMovies는 undefined가 되기 때문에 if(nowMovies)를 사용함  #9.8
+      if(sliding) return;
+      const totalMovies = nowMovies.results.slice(1).length;  // data는 20개라고 가정하고, data에서 Banner에 사용한 영화는 제외하기위해 slice(1)  #9.8
       const maxRowIndex = Math.floor(totalMovies / offset) -1;  // totalMovies(19)는 offset(6)으로 나누었을때 딱 떨어지지 않기에 Math.floor로 소수점 내림  #9.8
-      setRowIndex(rowIndex => rowIndex===0 ? maxRowIndex : rowIndex+1 );
+      setRowIndex(rowIndex => rowIndex===0 ? maxRowIndex : rowIndex-1 );
     }
   }
   function onBoxClicked(movieId:number) {
@@ -176,18 +227,29 @@ export default function Home(){
     //Overlay 클릭시 url이동
     navigate('/')
   }
+  function overViewMaxLength(overview:string, maxLength = 200) {
+  if (overview.length <= maxLength) {
+    return overview;
+  }
+  return overview.slice(0, maxLength)+"...";
+}
 
   return (
-    <Container style={{height:"1000vh"}}>
-      {isLoading ? 
+    <Container>
+      {isLoadingNowMovie ? 
         <Loader>Loading...</Loader> : 
         <>
-          <Banner onClick={increaseIndex} bgImg={getMovieImage(data?.results[0].backdrop_path||"")}>
-            <Title>{data?.results[0].original_title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
+          <Banner bgImg={getMovieImage(nowMovies?.results[0].backdrop_path||"")}>
+            <Title>{nowMovies?.results[0].original_title}</Title>
+            <Overview>{overViewMaxLength(nowMovies?.results[0].overview||"")}</Overview>
+            <More>
+              <span>개봉일 : {nowMovies?.results[0].release_date}</span>
+              <span>실시간 평점 : {Math.floor((nowMovies?.results[0].vote_average||0)*10)/10}점</span>
+            </More>
           </Banner>
           <Slider>
-            <AnimatePresence initial={false} onExitComplete={()=>{setExiting(false)}}>
+            <SliderTitle>현재 상영중인 작품</SliderTitle>
+            <AnimatePresence initial={false} onExitComplete={()=>{setSliding(false)}}>
             <Row 
               initial={{x:width+10}} 
               animate={{x:0}} 
@@ -196,7 +258,7 @@ export default function Home(){
               key={rowIndex}
             >
               { 
-                data?.results.slice(1).slice(rowIndex*offset,rowIndex*offset+offset).map((movie)=>{
+                nowMovies?.results.slice(1).slice(rowIndex*offset,rowIndex*offset+offset).map((movie)=>{
                   return (
                     <Box 
                       layoutId={movie.id+""}
@@ -216,6 +278,8 @@ export default function Home(){
                 })
               }
             </Row>
+            <PrevBtn onClick={decreaseIndex}>&larr;</PrevBtn>
+            <NextBtn onClick={increaseIndex}>&rarr;</NextBtn>
             </AnimatePresence>
           </Slider>
           <AnimatePresence>

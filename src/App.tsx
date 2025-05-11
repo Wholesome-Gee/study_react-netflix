@@ -3,6 +3,7 @@ import Navigation from './Components/Navigation';
 import Home from './Routes/Home';
 import Tv from './Routes/Tv';
 import Search from './Routes/Search';
+import { ReactQueryDevtools } from "react-query/devtools"
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path='movies/:movieId' element={<Home/>}/>
         </Route>
       </Routes>
+      <ReactQueryDevtools initialIsOpen={true} />
     </BrowserRouter>
   );
 }

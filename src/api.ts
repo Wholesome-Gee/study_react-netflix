@@ -25,6 +25,10 @@ interface IMovie {
   "vote_average": number,
   "vote_count": number
 }
+interface IGenres {
+  id:number;
+  name:string;
+}
 export interface IGetMovies {
   "dates": {
     "maximum": string,
@@ -35,12 +39,34 @@ export interface IGetMovies {
 }
 // Home.tsx에서 useQuery<IGetMovies>(['movies','nowPlaying'],getMovies)  #9.6
 // results부분은 다 작성할 필요 없고, 사용할 데이터만 골라서 타입하면 된다.  #9.6
+export interface IGetFirstMovie {
+  "adult": boolean,
+  "backdrop_path": string,
+  "budget": number,
+  "genres": IGenres[],
+  "id": number,
+  "original_language": string,
+  "popularity": number,
+  "release_date": string,
+  "revenue": number,
+  "runtime": number,
+  "spoken_languages": object,
+  "status": string,
+  "tagline": string,
+  "title": string,
+  "vote_average": number,
+  "vote_count": number,
+}
 
 export function getMovies(){
-  return fetch('https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1',options).then(response=>response.json())
+  return fetch('https://api.themoviedb.org/3/movie/now_playing?language=ko&page=1',options).then(response=>response.json())
 }
 
 export function getMovieImage(backdropPath:string, format?:string){
   return `https://image.tmdb.org/t/p/${format?format:"original"}${backdropPath}`
 }
 // getMovies로 받은 data에서 backdrop_path를 사용하여 이미지파일을 받아오는방법  #9.6
+
+export function getFirstMovie(movieId:number){
+  return `https://api.themoviedb.org/3/movie/${movieId}`
+}
